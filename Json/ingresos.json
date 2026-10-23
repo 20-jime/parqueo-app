@@ -14,4 +14,3 @@
   { "Consecutivo": 13, "IdParqueo": 2, "IdAutomovil": 3, "FechaHoraEntrada": "2026-10-20T10:00:00", "FechaHoraSalida": null },
   { "Consecutivo": 14, "IdParqueo": 1, "IdAutomovil": 4, "FechaHoraEntrada": "2026-10-21T14:30:00", "FechaHoraSalida": null },
   { "Consecutivo": 15, "IdParqueo": 2, "IdAutomovil": 5, "FechaHoraEntrada": "2026-10-23T07:50:00", "FechaHoraSalida": null }
-]
