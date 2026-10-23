@@ -1,0 +1,17 @@
+[
+  { "Consecutivo": 1,  "IdParqueo": 1, "IdAutomovil": 1, "FechaHoraEntrada": "2026-10-01T08:00:00", "FechaHoraSalida": "2026-10-01T10:30:00" },
+  { "Consecutivo": 2,  "IdParqueo": 1, "IdAutomovil": 2, "FechaHoraEntrada": "2026-10-01T09:15:00", "FechaHoraSalida": "2026-10-01T17:45:00" },
+  { "Consecutivo": 3,  "IdParqueo": 2, "IdAutomovil": 3, "FechaHoraEntrada": "2026-10-02T07:30:00", "FechaHoraSalida": "2026-10-02T09:00:00" },
+  { "Consecutivo": 4,  "IdParqueo": 2, "IdAutomovil": 4, "FechaHoraEntrada": "2026-10-02T12:00:00", "FechaHoraSalida": "2026-10-02T14:20:00" },
+  { "Consecutivo": 5,  "IdParqueo": 1, "IdAutomovil": 5, "FechaHoraEntrada": "2026-10-03T10:00:00", "FechaHoraSalida": "2026-10-03T13:10:00" },
+  { "Consecutivo": 6,  "IdParqueo": 1, "IdAutomovil": 1, "FechaHoraEntrada": "2026-10-05T08:30:00", "FechaHoraSalida": "2026-10-05T12:00:00" },
+  { "Consecutivo": 7,  "IdParqueo": 2, "IdAutomovil": 2, "FechaHoraEntrada": "2026-10-06T15:00:00", "FechaHoraSalida": "2026-10-06T18:30:00" },
+  { "Consecutivo": 8,  "IdParqueo": 1, "IdAutomovil": 3, "FechaHoraEntrada": "2026-10-07T09:00:00", "FechaHoraSalida": "2026-10-07T11:15:00" },
+  { "Consecutivo": 9,  "IdParqueo": 2, "IdAutomovil": 5, "FechaHoraEntrada": "2026-10-08T06:45:00", "FechaHoraSalida": "2026-10-08T16:00:00" },
+  { "Consecutivo": 10, "IdParqueo": 1, "IdAutomovil": 4, "FechaHoraEntrada": "2026-10-09T13:00:00", "FechaHoraSalida": "2026-10-09T15:40:00" },
+  { "Consecutivo": 11, "IdParqueo": 2, "IdAutomovil": 1, "FechaHoraEntrada": "2026-10-12T08:00:00", "FechaHoraSalida": "2026-10-12T09:30:00" },
+  { "Consecutivo": 12, "IdParqueo": 1, "IdAutomovil": 2, "FechaHoraEntrada": "2026-10-14T11:00:00", "FechaHoraSalida": "2026-10-14T14:00:00" },
+  { "Consecutivo": 13, "IdParqueo": 2, "IdAutomovil": 3, "FechaHoraEntrada": "2026-10-20T10:00:00", "FechaHoraSalida": null },
+  { "Consecutivo": 14, "IdParqueo": 1, "IdAutomovil": 4, "FechaHoraEntrada": "2026-10-21T14:30:00", "FechaHoraSalida": null },
+  { "Consecutivo": 15, "IdParqueo": 2, "IdAutomovil": 5, "FechaHoraEntrada": "2026-10-23T07:50:00", "FechaHoraSalida": null }
+]

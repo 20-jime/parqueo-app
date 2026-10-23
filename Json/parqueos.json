@@ -1,0 +1,4 @@
+[
+  { "IdParqueo": 1, "NombreProvincia": "San José", "Nombre": "Parqueo Central San José", "PrecioPorHora": 1500.00 },
+  { "IdParqueo": 2, "NombreProvincia": "Heredia",  "Nombre": "Parqueo Plaza Heredia",    "PrecioPorHora": 1200.00 }
+]
