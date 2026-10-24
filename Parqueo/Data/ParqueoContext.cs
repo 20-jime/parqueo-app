@@ -14,15 +14,9 @@ public partial class ParqueoContext : DbContext
 
     public virtual DbSet<PrqAutomovile> PrqAutomoviles { get; set; }
 
-    public virtual DbSet<PrqAutomovile1> PrqAutomoviles1 { get; set; }
-
     public virtual DbSet<PrqIngresoAutomovile> PrqIngresoAutomoviles { get; set; }
 
     public virtual DbSet<PrqParqueo> PrqParqueos { get; set; }
-
-    public virtual DbSet<PrqParqueo1> PrqParqueos1 { get; set; }
-
-    public virtual DbSet<PrqParqueo2> PrqParqueos2 { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,27 +30,6 @@ public partial class ParqueoContext : DbContext
             .HasPostgresEnum("user_25", "sport", new[] { "soccer", "basketball", "baseball", "volleyball", "rugby", "hockey" });
 
         modelBuilder.Entity<PrqAutomovile>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("prq_automoviles_pkey");
-
-            entity.ToTable("prq_automoviles", "user_04");
-
-            entity.Property(e => e.Id)
-                .UseIdentityAlwaysColumn()
-                .HasColumnName("id");
-            entity.Property(e => e.Anio).HasColumnName("anio");
-            entity.Property(e => e.Color)
-                .HasMaxLength(50)
-                .HasColumnName("color");
-            entity.Property(e => e.Fabricante)
-                .HasMaxLength(100)
-                .HasColumnName("fabricante");
-            entity.Property(e => e.Tipo)
-                .HasMaxLength(10)
-                .HasColumnName("tipo");
-        });
-
-        modelBuilder.Entity<PrqAutomovile1>(entity =>
         {
             entity.HasKey(e => e.IdAutomovil).HasName("prq_automoviles_pkey");
 
@@ -103,47 +76,6 @@ public partial class ParqueoContext : DbContext
         });
 
         modelBuilder.Entity<PrqParqueo>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("prq_parqueo_pkey");
-
-            entity.ToTable("prq_parqueo", "user_12");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(150)
-                .HasColumnName("nombre");
-            entity.Property(e => e.NombreProvincia)
-                .HasMaxLength(100)
-                .HasColumnName("nombre_provincia");
-            entity.Property(e => e.PrecioPorHora)
-                .HasPrecision(10, 2)
-                .HasColumnName("precio_por_hora");
-        });
-
-        modelBuilder.Entity<PrqParqueo1>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("pk_prq_parqueo");
-
-            entity.ToTable("prq_parqueo", "user_13", tb => tb.HasComment("Parqueos (estacionamientos) disponibles."));
-
-            entity.Property(e => e.Id)
-                .HasComment("Llave primaria del parqueo.")
-                .HasColumnName("id");
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(100)
-                .HasComment("Nombre del parqueo.")
-                .HasColumnName("nombre");
-            entity.Property(e => e.NombreProvincia)
-                .HasMaxLength(20)
-                .HasComment("Provincia de Costa Rica donde se ubica el parqueo.")
-                .HasColumnName("nombre_provincia");
-            entity.Property(e => e.PrecioPorHora)
-                .HasPrecision(10, 2)
-                .HasComment("Tarifa por hora en colones.")
-                .HasColumnName("precio_por_hora");
-        });
-
-        modelBuilder.Entity<PrqParqueo2>(entity =>
         {
             entity.HasKey(e => e.IdParqueo).HasName("prq_parqueo_pkey");
 
