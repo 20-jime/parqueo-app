@@ -26,20 +26,34 @@ if (usarBaseDatos)
     // Un contexto por petición, creado con tu fábrica (lee el secreto de usuario)
     builder.Services.AddScoped(_ => ParqueoContextFactory.Crear());
 
+    // Automóviles
     builder.Services.AddScoped<IAutomovilRepositorio, AutomovilRepositorio>();
     builder.Services.AddScoped<IEscrituraRepositorio<PrqAutomovile>>(sp =>
         new EscrituraContexto<PrqAutomovile>(
             sp.GetRequiredService<ParqueoContext>(), a => a.IdAutomovil));
+
+    // Parqueos
+    builder.Services.AddScoped<IParqueoRepositorio, ParqueoRepositorio>();
+    builder.Services.AddScoped<IEscrituraRepositorio<PrqParqueo>>(sp =>
+        new EscrituraContexto<PrqParqueo>(
+            sp.GetRequiredService<ParqueoContext>(), p => p.IdParqueo));
 }
 else
 {
+    // Automóviles
     builder.Services.AddSingleton<IAutomovilRepositorio, AutomovilJsonRepositorio>();
     builder.Services.AddSingleton<IEscrituraRepositorio<PrqAutomovile>>(_ =>
         new EscrituraJson<PrqAutomovile>(
             "automoviles.json", a => a.IdAutomovil, (a, id) => a.IdAutomovil = id));
+
+    // Parqueos
+    builder.Services.AddSingleton<IParqueoRepositorio, ParqueoJsonRepositorio>();
+    builder.Services.AddSingleton<IEscrituraRepositorio<PrqParqueo>>(_ =>
+        new EscrituraJson<PrqParqueo>(
+            "parqueos.json", p => p.IdParqueo, (p, id) => p.IdParqueo = id));
 }
 
-// Parqueo e Ingresos se registran en las fases siguientes.
+// Ingresos se registra en la fase siguiente.
 
 var app = builder.Build();
 
