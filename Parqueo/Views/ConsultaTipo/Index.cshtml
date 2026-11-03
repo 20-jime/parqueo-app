@@ -1,0 +1,137 @@
+@{
+    ViewData["Title"] = "Consulta por tipo";
+}
+<style>
+    tr.seleccionada td { background: #fff4cc; }
+    h2 { margin-top: 2rem; }
+</style>
+
+<h1>Consulta por tipo de automóvil</h1>
+
+<form id="filtro" class="fila">
+    <label>Tipo de automóvil
+        <select id="tipo" required>
+            <option value="">Seleccione…</option>
+            <option>Sedan</option>
+            <option>4x4</option>
+            <option>Moto</option>
+        </select>
+    </label>
+    <button type="submit">Consultar</button>
+</form>
+<p id="mensaje" class="mensaje" role="status">Seleccione un tipo y presione Consultar.</p>
+
+<div class="tabla-scroll">
+    <table>
+        <thead>
+            <tr><th>Id</th><th>Color</th><th>Año</th><th>Fabricante</th><th>Tipo</th><th>Ingresos</th></tr>
+        </thead>
+        <tbody id="maestro"></tbody>
+    </table>
+</div>
+
+<section id="panel-detalle" hidden>
+    <h2 id="titulo-detalle"></h2>
+    <p id="mensaje-detalle" class="mensaje" role="status"></p>
+    <div class="tabla-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Parqueo</th><th>Entrada</th><th>Salida</th>
+                    <th>Estadía (minutos)</th><th>Estadía (horas)</th><th>Monto a cancelar</th>
+                </tr>
+            </thead>
+            <tbody id="detalle"></tbody>
+        </table>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+    const maestro = document.getElementById('maestro');
+    const detalle = document.getElementById('detalle');
+    const panel = document.getElementById('panel-detalle');
+    const mensaje = document.getElementById('mensaje');
+    const mensajeDetalle = document.getElementById('mensaje-detalle');
+
+    function esc(s) {
+        return String(s).replace(/[&<>"']/g, c =>
+            ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function avisar(el, texto, esError) {
+        el.textContent = texto;
+        el.className = 'mensaje' + (esError ? ' error' : '');
+    }
+    const fecha = iso => new Date(iso).toLocaleString('es-CR', { dateStyle: 'short', timeStyle: 'short' });
+    const numero = n => Number(n).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // MAESTRO: GET api/automoviles/buscar?tipo=...
+    async function consultar(tipo) {
+        panel.hidden = true;
+        detalle.innerHTML = '';
+        avisar(mensaje, 'Consultando…');
+        try {
+            const r = await fetch('/api/automoviles/buscar?tipo=' + encodeURIComponent(tipo));
+            if (!r.ok) throw new Error('Estado ' + r.status);
+            const autos = await r.json();
+            maestro.innerHTML = autos.map(a => `
+                <tr data-fila="${a.idAutomovil}">
+                    <td>${a.idAutomovil}</td>
+                    <td>${esc(a.color)}</td>
+                    <td>${a.anio}</td>
+                    <td>${esc(a.fabricante)}</td>
+                    <td>${esc(a.tipo)}</td>
+                    <td><button type="button" class="sec" data-auto="${a.idAutomovil}"
+                        data-desc="${esc(a.fabricante + ' ' + a.color)}">Ver ingresos</button></td>
+                </tr>`).join('');
+            avisar(mensaje, autos.length === 0 ? 'No hay automóviles de ese tipo.'
+                : autos.length + ' automóvil(es). Seleccione uno para ver sus ingresos.');
+        } catch (e) {
+            maestro.innerHTML = '';
+            avisar(mensaje, 'No se pudo consultar el API: ' + e.message, true);
+        }
+    }
+
+    // DETALLE: GET api/ingresos/por-automovil/{id}
+    async function verIngresos(id, descripcion) {
+        maestro.querySelectorAll('tr').forEach(tr =>
+            tr.classList.toggle('seleccionada', tr.dataset.fila === String(id)));
+        panel.hidden = false;
+        document.getElementById('titulo-detalle').textContent =
+            'Ingresos a parqueos del automóvil ' + id + ' (' + descripcion + ')';
+        detalle.innerHTML = '';
+        avisar(mensajeDetalle, 'Consultando…');
+        try {
+            const r = await fetch('/api/ingresos/por-automovil/' + id);
+            if (!r.ok) throw new Error('Estado ' + r.status);
+            const ingresos = await r.json();
+            detalle.innerHTML = ingresos.map(i => {
+                const enCurso = i.fechaHoraSalida === null;
+                return `
+                <tr>
+                    <td>${i.idParqueo}</td>
+                    <td>${fecha(i.fechaHoraEntrada)}</td>
+                    <td>${enCurso ? 'En curso' : fecha(i.fechaHoraSalida)}</td>
+                    <td>${enCurso ? '—' : numero(i.duracionMinutos)}</td>
+                    <td>${enCurso ? '—' : numero(i.duracionHoras)}</td>
+                    <td>${i.montoTotal === null ? '—' : '₡' + numero(i.montoTotal)}</td>
+                </tr>`;
+            }).join('');
+            avisar(mensajeDetalle, ingresos.length === 0
+                ? 'Este automóvil no tiene ingresos registrados.'
+                : ingresos.length + ' ingreso(s) registrado(s).');
+        } catch (e) {
+            avisar(mensajeDetalle, 'No se pudo consultar el API: ' + e.message, true);
+        }
+    }
+
+    document.getElementById('filtro').addEventListener('submit', e => {
+        e.preventDefault();
+        consultar(document.getElementById('tipo').value);
+    });
+    maestro.addEventListener('click', e => {
+        const b = e.target.closest('button[data-auto]');
+        if (b) verIngresos(b.dataset.auto, b.dataset.desc);
+    });
+</script>
+}
