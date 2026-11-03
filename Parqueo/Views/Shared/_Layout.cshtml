@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Parqueo</title>
+    <style>
+        :root {
+            --asfalto: #1f2a33; --linea: #f2c230; --fondo: #f5f6f4;
+            --texto: #1c2329; --borde: #cfd5d9; --error: #b3261e;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: system-ui, "Segoe UI", sans-serif; background: var(--fondo); color: var(--texto); }
+        header { background: var(--asfalto); border-bottom: 4px solid var(--linea); padding: .9rem 1.5rem; display: flex; gap: 2rem; align-items: baseline; }
+        header strong { color: #fff; font-size: 1.2rem; }
+        header a { color: #dfe5e9; text-decoration: none; }
+        header a:hover, header a:focus-visible { color: var(--linea); }
+        main { max-width: 60rem; margin: 1.5rem auto; padding: 0 1rem; }
+        h1 { margin-top: 0; }
+        label { display: flex; flex-direction: column; font-size: .9rem; gap: .25rem; }
+        input, select { padding: .5rem; border: 1px solid var(--borde); border-radius: 4px; font: inherit; background: #fff; }
+        .btn, button { padding: .5rem 1rem; border: 1px solid var(--asfalto); background: var(--asfalto); color: #fff; border-radius: 4px; font: inherit; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn.sec, button.sec { background: #fff; color: var(--asfalto); }
+        .btn.peligro, button.peligro { background: #fff; color: var(--error); border-color: var(--error); }
+        .btn:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--linea); outline-offset: 1px; }
+        .fila { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; margin-bottom: 1rem; }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--borde); }
+        th { background: #e9ecee; }
+        .acciones { display: flex; gap: .4rem; }
+        .acciones .btn, .acciones button { padding: .3rem .7rem; font-size: .9rem; }
+        .mensaje { min-height: 1.4rem; }
+        .mensaje.error { color: var(--error); }
+        dl { display: grid; grid-template-columns: 9rem 1fr; gap: .5rem 1rem; background: #fff; padding: 1rem; border: 1px solid var(--borde); }
+        dt { font-weight: 600; } dd { margin: 0; }
+        form.datos { display: grid; gap: 1rem; max-width: 24rem; }
+        @@media (max-width: 40rem) { .tabla-scroll { overflow-x: auto; } }
+    </style>
+</head>
+<body>
+    <header>
+        <strong>Parqueo</strong>
+        <a href="/Vehiculos">Automóviles</a>
+        <a href="/ConsultaTipo">Consulta por tipo</a>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Automóviles";
+}
+<h1>Automóviles</h1>
+
+<form id="filtro" class="fila">
+    <label>Año desde
+        <input type="number" id="desde" min="1900" max="2100" />
+    </label>
+    <label>Año hasta
+        <input type="number" id="hasta" min="1900" max="2100" />
+    </label>
+    <button type="submit">Buscar</button>
+    <a class="btn sec" href="/Vehiculos/Crear">Nuevo automóvil</a>
+</form>
+<p id="mensaje" class="mensaje" role="status">Si deja los años vacíos, se listan todos los automóviles.</p>
+
+<div class="tabla-scroll">
+    <table>
+        <thead>
+            <tr><th>Id</th><th>Color</th><th>Año</th><th>Fabricante</th><th>Tipo</th><th>Acciones</th></tr>
+        </thead>
+        <tbody id="cuerpo"></tbody>
+    </table>
+</div>
+
+@section Scripts {
+<script>
+    const cuerpo = document.getElementById('cuerpo');
+    const mensaje = document.getElementById('mensaje');
+    const desde = document.getElementById('desde');
+    const hasta = document.getElementById('hasta');
+
+    function esc(s) {
+        return String(s).replace(/[&<>"']/g, c =>
+            ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function avisar(texto, esError) {
+        mensaje.textContent = texto;
+        mensaje.className = 'mensaje' + (esError ? ' error' : '');
+    }
+
+    // GET api/automoviles/buscar?anioDesde=&anioHasta=
+    async function buscar() {
+        const d = desde.value, h = hasta.value;
+        if (d && h && Number(d) > Number(h)) {
+            avisar('El año inferior no puede ser mayor que el superior.', true);
+            return;
+        }
+        const p = new URLSearchParams();
+        if (d) p.set('anioDesde', d);
+        if (h) p.set('anioHasta', h);
+
+        avisar('Buscando…');
+        try {
+            const r = await fetch('/api/automoviles/buscar?' + p);
+            if (!r.ok) throw new Error('Estado ' + r.status);
+            const autos = await r.json();
+            cuerpo.innerHTML = autos.map(a => `
+                <tr>
+                    <td>${a.idAutomovil}</td>
+                    <td>${esc(a.color)}</td>
+                    <td>${a.anio}</td>
+                    <td>${esc(a.fabricante)}</td>
+                    <td>${esc(a.tipo)}</td>
+                    <td class="acciones">
+                        <a class="btn sec" href="/Vehiculos/Detalles/${a.idAutomovil}">Detalles</a>
+                        <a class="btn sec" href="/Vehiculos/Editar/${a.idAutomovil}">Editar</a>
+                        <button type="button" class="peligro" data-borrar="${a.idAutomovil}">Borrar</button>
+                    </td>
+                </tr>`).join('');
+            avisar(autos.length === 0 ? 'No hay automóviles en ese intervalo de años.'
+                                       : autos.length + ' automóvil(es) encontrado(s).');
+        } catch (e) {
+            cuerpo.innerHTML = '';
+            avisar('No se pudo consultar el API: ' + e.message, true);
+        }
+    }
+
+    // DELETE api/automoviles/{id}
+    async function borrar(id) {
+        if (!confirm('¿Borrar el automóvil ' + id + '?')) return;
+        try {
+            const r = await fetch('/api/automoviles/' + id, { method: 'DELETE' });
+            if (r.status === 204) { await buscar(); avisar('Automóvil ' + id + ' borrado.'); }
+            else if (r.status === 409) avisar(await r.text(), true);
+            else if (r.status === 404) avisar('El automóvil ya no existe.', true);
+            else avisar('No se pudo borrar (estado ' + r.status + ').', true);
+        } catch (e) {
+            avisar('No se pudo borrar: ' + e.message, true);
+        }
+    }
+
+    document.getElementById('filtro').addEventListener('submit', e => { e.preventDefault(); buscar(); });
+    cuerpo.addEventListener('click', e => {
+        const id = e.target.dataset.borrar;
+        if (id) borrar(id);
+    });
+    buscar();
+</script>
+}

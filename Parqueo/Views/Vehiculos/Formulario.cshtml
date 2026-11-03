@@ -1,0 +1,86 @@
+@model int
+@{
+    var editando = Model > 0;
+    ViewData["Title"] = editando ? "Editar automóvil" : "Nuevo automóvil";
+}
+<h1>@ViewData["Title"]</h1>
+<p id="mensaje" class="mensaje" role="status"></p>
+
+<form id="form" class="datos">
+    <label>Color
+        <input id="color" maxlength="30" required />
+    </label>
+    <label>Año
+        <input id="anio" type="number" min="1900" max="2100" required />
+    </label>
+    <label>Fabricante
+        <input id="fabricante" maxlength="50" required />
+    </label>
+    <label>Tipo
+        <select id="tipo" required>
+            <option value="">Seleccione…</option>
+            <option>Sedan</option>
+            <option>4x4</option>
+            <option>Moto</option>
+        </select>
+    </label>
+    <div class="fila">
+        <button type="submit">@(editando ? "Guardar cambios" : "Crear automóvil")</button>
+        <a class="btn sec" href="/Vehiculos">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+<script>
+    const id = @Model;
+    const mensaje = document.getElementById('mensaje');
+    const campo = n => document.getElementById(n);
+
+    function avisar(texto, esError) {
+        mensaje.textContent = texto;
+        mensaje.className = 'mensaje' + (esError ? ' error' : '');
+    }
+
+    // Al editar: GET api/automoviles/{id} para llenar el formulario
+    async function cargar() {
+        try {
+            const r = await fetch('/api/automoviles/' + id);
+            if (r.status === 404) { avisar('El automóvil no existe.', true); campo('form').hidden = true; return; }
+            if (!r.ok) throw new Error('Estado ' + r.status);
+            const a = await r.json();
+            campo('color').value = a.color;
+            campo('anio').value = a.anio;
+            campo('fabricante').value = a.fabricante;
+            // Compara sin importar mayúsculas (la BD puede devolver "sedan")
+            const opcion = [...campo('tipo').options].find(o => o.text.toLowerCase() === String(a.tipo).toLowerCase());
+            campo('tipo').value = opcion ? opcion.value : '';
+        } catch (e) {
+            avisar('No se pudo consultar el API: ' + e.message, true);
+        }
+    }
+
+    // Crear: POST api/automoviles   |   Editar: PUT api/automoviles/{id}
+    campo('form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const cuerpo = {
+            color: campo('color').value.trim(),
+            anio: Number(campo('anio').value),
+            fabricante: campo('fabricante').value.trim(),
+            tipo: campo('tipo').value
+        };
+        try {
+            const r = await fetch(id > 0 ? '/api/automoviles/' + id : '/api/automoviles', {
+                method: id > 0 ? 'PUT' : 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(cuerpo)
+            });
+            if (r.ok) { window.location.href = '/Vehiculos'; return; }
+            avisar(r.status === 404 ? 'El automóvil ya no existe.' : 'No se pudo guardar (estado ' + r.status + ').', true);
+        } catch (e) {
+            avisar('No se pudo guardar: ' + e.message, true);
+        }
+    });
+
+    if (id > 0) cargar();
+</script>
+}

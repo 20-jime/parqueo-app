@@ -1,0 +1,41 @@
+@model int
+@{
+    ViewData["Title"] = "Detalles del automóvil";
+}
+<h1>Detalles del automóvil</h1>
+<p id="mensaje" class="mensaje" role="status"></p>
+<dl id="datos" hidden>
+    <dt>Id</dt><dd id="f-id"></dd>
+    <dt>Color</dt><dd id="f-color"></dd>
+    <dt>Año</dt><dd id="f-anio"></dd>
+    <dt>Fabricante</dt><dd id="f-fabricante"></dd>
+    <dt>Tipo</dt><dd id="f-tipo"></dd>
+</dl>
+<div class="fila">
+    <a class="btn sec" href="/Vehiculos">Volver al listado</a>
+    <a class="btn" href="/Vehiculos/Editar/@Model">Editar</a>
+</div>
+
+@section Scripts {
+<script>
+    // GET api/automoviles/{id}
+    (async () => {
+        const mensaje = document.getElementById('mensaje');
+        try {
+            const r = await fetch('/api/automoviles/@Model');
+            if (r.status === 404) { mensaje.textContent = 'El automóvil no existe.'; mensaje.className = 'mensaje error'; return; }
+            if (!r.ok) throw new Error('Estado ' + r.status);
+            const a = await r.json();
+            document.getElementById('f-id').textContent = a.idAutomovil;
+            document.getElementById('f-color').textContent = a.color;
+            document.getElementById('f-anio').textContent = a.anio;
+            document.getElementById('f-fabricante').textContent = a.fabricante;
+            document.getElementById('f-tipo').textContent = a.tipo;
+            document.getElementById('datos').hidden = false;
+        } catch (e) {
+            mensaje.textContent = 'No se pudo consultar el API: ' + e.message;
+            mensaje.className = 'mensaje error';
+        }
+    })();
+</script>
+}
